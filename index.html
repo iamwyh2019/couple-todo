@@ -30,11 +30,26 @@
             <el-divider><i class="el-icon-dessert"></i></el-divider>
 
             <svg :width="svgWidth" :height="svgWidth">
-
+                <g id="clock"></g>
+                <g id="events"></g>
             </svg>
+
+            <el-dialog
+            title="添加日程",
+            v-model="addingEvent",
+            :close-on-click-modal=false,
+
+            >
+
+            </el-dialog>
+
+
         </div>
 
         <script src="js/todo-list.js"></script>
-        <script src="js/main.js"></script>
+        <script src="js/utils.js"></script>
+        <script>
+            Vue.createApp(Todo).use(ElementPlus).mount("#todo-clock");
+        </script>
     </body>
 </html>

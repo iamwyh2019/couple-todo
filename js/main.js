@@ -1,0 +1,1 @@
+Vue.createApp(Todo).use(ElementPlus).mount("#todo-clock");

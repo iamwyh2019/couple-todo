@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+        <title>TODO</title>
+        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="css/index.css">
+        <script src="js/vue.global.prod.js"></script>
+        <script src="js/index.full.js"></script>
+        <script src="js/d3.v4.min.js"></script>
+        <script src="js/axios.min.js"></script>
+    </head>
+    <body>
+        <div id="todo-clock" class="clock">
+            <el-button
+            type="success"
+            style="position:absolute;right:0;"
+            @click="addEvent">加个日程</el-button>
+    
+            <el-radio-group
+            v-model="username"
+            style="margin-bottom: 20px;"
+            fill="plum"
+            @change="changeName">
+                <el-radio-button label="lanran">我是小染</el-radio-button>
+                <el-radio-button label="xiaowu">我是小吴</el-radio-button>
+            </el-radio-group>
+
+            <el-divider><i class="el-icon-dessert"></i></el-divider>
+
+            <svg :width="svgWidth" :height="svgWidth">
+
+            </svg>
+        </div>
+
+        <script src="js/todo-list.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

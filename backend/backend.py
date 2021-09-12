@@ -9,19 +9,23 @@ app = Flask(__name__)
 @app.route('/get_daily_schedule', methods = ["GET"])
 def get_daily_schedule():
     # One parameter: st --> start of one's day (UTC timestamp)
-    ts = request.args.get("ts", type = int, default = -1)
-    if ts == -1:
+    username = request.args.get("username", type = str, default = None)
+    offset = request.args.get("offset", type = int, default = 0)
+    if username == None:
         return jsonify({
             "code": 2,
-            "msg": "Invalid timestamp"
+            "msg": "Invalid username"
         })
     
     database = ScheduleDatabase()
-    events = database.findTodayEvent(ts)
+    lanran, xiaowu = database.findTodayEvent(username, offset)
     result = {
         "code": 0,
         "msg": "",
-        "data": events
+        "data": {
+            "lanran": lanran,
+            "xiaowu": xiaowu,
+        }
     }
 
     return jsonify(result)
@@ -30,8 +34,11 @@ def get_daily_schedule():
 def add_schedule():
     form = request.form
     name, event, freq = form['name'], form['event'], form['freq']
-    st = form.get('st', type = int)
-    en = form.get('en', type = int)
+    year = form.get('year', type = int)
+    month = form.get('month', type = int)
+    day = form.get('day', type = int)
+    st_sec = form.get('st_sec', type = int)
+    en_sec = form.get('en_sec', type = int)
 
     if freq not in ScheduleDatabase.STR2FREQ:
         return jsonify({
@@ -41,7 +48,7 @@ def add_schedule():
     freq = ScheduleDatabase.STR2FREQ[freq]
 
     database = ScheduleDatabase()
-    database.addEvent(name, event, st, en, freq)
+    database.addEvent(name, event, year, month, day, st_sec, en_sec, freq)
     
     return jsonify({
         "code": 0,

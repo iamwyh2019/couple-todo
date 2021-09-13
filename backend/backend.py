@@ -1,9 +1,12 @@
 from flask import Flask, request, jsonify
 from gevent import pywsgi
-from datetime import datetime
-import time
 from datasource import ScheduleDatabase
 from flask_cors import CORS
+import json
+
+with open('val.json', 'r', encoding = 'utf-8') as f:
+    val_json = json.load(f)
+val_pwd = val_json['val']
 
 app = Flask(__name__)
 CORS(app, resources=r'/*')
@@ -16,14 +19,14 @@ def get_daily_schedule():
     if username == None:
         return jsonify({
             "code": 2,
-            "msg": "Invalid username"
+            "message": "Invalid username"
         })
     
     database = ScheduleDatabase()
     lanran, xiaowu = database.findTodayEvent(username, offset)
     result = {
         "code": 0,
-        "msg": "",
+        "message": "",
         "data": {
             "lanran": lanran,
             "xiaowu": xiaowu,
@@ -41,17 +44,24 @@ def add_schedule():
     day = form.get('day', type = int, default = -1)
     st_sec = form.get('st_sec', type = int, default = -1)
     en_sec = form.get('en_sec', type = int, default = -1)
+    validate = form.get('validate', type = str, default = '')
+
+    if validate != val_pwd:
+        return jsonify({
+            "code": 5,
+            "message": "身份验证失败"
+        })
 
     if year == -1 or month == -1 or day == -1 or st_sec == -1 or en_sec == -1:
         return jsonify({
             "code": 4,
-            "msg": "Invalid parameter"
+            "message": "Invalid parameter"
         })
 
     if freq not in ScheduleDatabase.STR2FREQ:
         return jsonify({
             "code": 1,
-            "msg": "Invalid frequency"
+            "message": "Invalid frequency"
         })
     freq = ScheduleDatabase.STR2FREQ[freq]
 
@@ -60,7 +70,7 @@ def add_schedule():
     
     return jsonify({
         "code": 0,
-        "msg": ""
+        "message": ""
     })
 
 @app.route('/remove_schedule', methods = ["POST"])
@@ -69,7 +79,7 @@ def remove_schedule():
     if event_id == -1:
         return jsonify({
             "code": 3,
-            "msg": "Invalid event ID"
+            "message": "Invalid event ID"
         })
     
     database = ScheduleDatabase()
@@ -77,7 +87,7 @@ def remove_schedule():
 
     return jsonify({
         "code": 0,
-        "msg": ""
+        "message": ""
     })
 if __name__ == "__main__":
     server = pywsgi.WSGIServer(('0.0.0.0', 3846), app)

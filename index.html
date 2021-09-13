@@ -3,7 +3,8 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
-        <title>TODO</title>
+        <link rel="shortcut icon" href="assets/head.ico"type="image/x-icon" />
+        <title>Ring Clock</title>
         <link rel="stylesheet" href="css/style.css">
         <link rel="stylesheet" href="css/index.css">
         <script src="js/vue.global.prod.js"></script>
@@ -32,12 +33,14 @@
 
             <svg :width="svgWidth" :height="svgWidth">
                 <g id="clock"></g>
-                <g id="events"></g>
+                <g id="events-xiaowu"></g>
+                <g id="events-lanran"></g>
             </svg>
 
             <el-dialog
             title="添加日程"
             v-model="addingEvent"
+            @open="dialogOpen()"
             :close-on-click-modal=false>
                 <el-form
                 ref="eventForm"
@@ -87,7 +90,7 @@
                         </el-col>
                         <el-col class="line" :span="2">&nbsp;&nbsp;&nbsp;</el-col>
                         <el-col :span="11">
-                            <el-tooltip placement="top" content="用于确定时区，会自动转换夏/冬令时~">
+                            <el-tooltip placement="top" content="用于确定时区，会自动转换夏/冬令时">
                                 <i class="el-icon-question" style="font-size:1.2rem;"></i>                                 
                             </el-tooltip>
                         </el-col>
@@ -105,6 +108,9 @@
                     </el-form-item>
                     <el-form-item label="事件内容" prop="event">
                         <el-input v-model="form.event" autocomplete="off"></el-input>
+                    </el-form-item>
+                    <el-form-item label="身份验证" prop="validate">
+                        <el-input v-model="form.validate" placeholder="请输入姓名拼音全拼"></el-input>
                     </el-form-item>
                 </el-form>
                 <span class="dialog-footer">

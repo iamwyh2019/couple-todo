@@ -68,7 +68,7 @@ class ScheduleDatabase():
                 elif rdict['freq'] == self.FREQ_DAILY:
                     # Definitely append
                     myres.append(rdict)
-                elif rdict['freq'] == self.FREQ_DAILY:
+                elif rdict['freq'] == self.FREQ_WEEKLY:
                     if eventDate.isoweekday() == nweek:
                         myres.append(rdict)
         

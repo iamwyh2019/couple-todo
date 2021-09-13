@@ -17,7 +17,7 @@
         <div id="todo-clock" class="clock">
 
             <el-row>
-                <el-col :span="14" :offset="5">
+                <el-col :span="12" :offset="6">
                     <el-radio-group
                     v-model="username"
                     fill="plum"
@@ -26,7 +26,7 @@
                         <el-radio-button label="xiaowu">我是小吴</el-radio-button>
                     </el-radio-group>
                 </el-col>
-                <el-col :span="2" :offset="1">
+                <el-col :span="4">
                     <el-button
                     type="success"
                     @click="addEvent">加个日程</el-button>

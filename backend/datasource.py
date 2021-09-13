@@ -51,8 +51,8 @@ class ScheduleDatabase():
         DAYLEN = 24*60*60
 
         with self._connect() as conn:
-            lanran_list = conn.execute("SELECT FROM schedule WHERE name=?", ('lanran',)).fetchall()
-            xiaowu_list = conn.execute("SELECT FROM schedule WHERE name=?", ('xiaowu',)).fetchall()
+            lanran_list = conn.execute("SELECT *FROM schedule WHERE name=?", ('lanran',)).fetchall()
+            xiaowu_list = conn.execute("SELECT *FROM schedule WHERE name=?", ('xiaowu',)).fetchall()
         
         def process_self(mylist, myres, today):
             for row in mylist:
@@ -170,3 +170,6 @@ class ScheduleDatabase():
         shiftDay = datetime(2021,11,7,13)
         nowTime = datetime.now()
         return nowTime < shiftDay
+
+if __name__ == "__main__":
+    schedule = ScheduleDatabase()

@@ -2,3 +2,5 @@
 *.pyc
 *.db
 backend/val.json
+*.pem
+backend/cert

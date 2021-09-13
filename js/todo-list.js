@@ -57,15 +57,21 @@ const Todo = {
         dialogOpen() {
             this.resetEventForm();
         },
+        getAPISource() {
+            domain = document.domain;
+            if (!domain)
+                return 'http://localhost:3846'
+            return `https://${domain}:3846`;
+        },
         submitEvent() {
             this.$refs['eventForm'].validate(v => {
                 if (!v) return;
-
+                let apiSource = this.getAPISource();
                 let data = getFormData(this.form);
                 this.sendingEvent = true;
                 axios({
                     method: 'post',
-                    url: 'http://localhost:3846/add_schedule',
+                    url: apiSource + '/add_schedule',
                     headers: {
                         "Content-Type":'application/x-www-form-urlencoded; charset=UTF-8'
                     },
@@ -100,10 +106,11 @@ const Todo = {
         },
         refreshEventData(delay = 0) {
             var loadingInstance = ElementPlus.ElLoading.service({text: '正在获取日程'});
+            let apiSource = this.getAPISource();
             username = this.username;
             axios({
                 method: 'get',
-                url: 'http://localhost:3846/get_daily_schedule',
+                url: apiSource + '/get_daily_schedule',
                 params: {username: username}
             })
             .then(response => {

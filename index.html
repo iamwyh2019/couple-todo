@@ -10,6 +10,7 @@
         <script src="js/index.full.js"></script>
         <script src="js/d3.v4.min.js"></script>
         <script src="js/axios.min.js"></script>
+        <script src="js/qs.min.js"></script>
     </head>
     <body>
         <div id="todo-clock" class="clock">
@@ -35,12 +36,85 @@
             </svg>
 
             <el-dialog
-            title="添加日程",
-            v-model="addingEvent",
-            :close-on-click-modal=false,
-
-            >
-
+            title="添加日程"
+            v-model="addingEvent"
+            :close-on-click-modal=false>
+                <el-form
+                ref="eventForm"
+                :model="form"
+                label-width="80px"
+                :rules="rules"
+                status-icon>
+                    <el-form-item label="开始日期" prop="date">
+                        <el-col :span="11">
+                            <el-date-picker
+                            type="date"
+                            placeholder="开始日期"
+                            v-model="form.date"
+                            style="width:100%;">
+                            </el-date-picker>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="起止时间" required>
+                        <el-col :span="11">
+                            <el-form-item prop="time1">
+                                <el-time-picker
+                                placeholder="开始时间"
+                                v-model="form.time1"
+                                style="width: 100%;"
+                                ></el-time-picker>
+                            </el-form-item>
+                        </el-col>
+                        <el-col class="line" :span="2">&nbsp;&nbsp;&nbsp;</el-col>
+                        <el-col :span="11">
+                            <el-form-item prop="time2">
+                                <el-time-picker
+                                placeholder="结束时间"
+                                v-model="form.time2"
+                                style="width: 100%;"
+                                ></el-time-picker>
+                            </el-form-item>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="我是谁呀">
+                        <el-col :span="11">
+                            <el-radio-group
+                            v-model="form.name"
+                            fill="#73c2fb">
+                                <el-radio-button label="lanran">我是小染</el-radio-button>
+                                <el-radio-button label="xiaowu">我是小吴</el-radio-button>
+                            </el-radio-group>
+                        </el-col>
+                        <el-col class="line" :span="2">&nbsp;&nbsp;&nbsp;</el-col>
+                        <el-col :span="11">
+                            <el-tooltip placement="top" content="用于确定时区，会自动转换夏/冬令时~">
+                                <i class="el-icon-question" style="font-size:1.2rem;"></i>                                 
+                            </el-tooltip>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item  label="事件频率">
+                        <el-col :span="11">
+                            <el-radio-group
+                            v-model="form.freq"
+                            fill="#73c2fb">
+                                <el-radio-button label="once">单次</el-radio-button>
+                                <el-radio-button label="daily">每天</el-radio-button>
+                                <el-radio-button label="weekly">每周</el-radio-button>
+                            </el-radio-group>
+                        </el-col>
+                    </el-form-item>
+                    <el-form-item label="事件内容" prop="event">
+                        <el-input v-model="form.event" autocomplete="off"></el-input>
+                    </el-form-item>
+                </el-form>
+                <span class="dialog-footer">
+                    <el-button @click="resetEventForm()">重置</el-button>
+                    <el-button type="primary" @click="submitEvent()">添加</el-button>
+                    &nbsp;&nbsp;
+                    <i class="el-icon-loading"
+                    style="font-size:2.2rem;position:absolute;"
+                    v-if="sendingEvent"></i>
+                </span>
             </el-dialog>
 
 

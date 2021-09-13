@@ -1,9 +1,41 @@
 const Todo = {
     data() {
+        var checkTime = (rule, value, callback) => {
+            if (this.form.time1 === ''){
+                callback(new Error('请先选择开始时间'));
+            }
+            else if (value === ''){
+                callback(new Error('请选择结束时间'));
+            }
+            else {
+                let startTime = new Date(this.form.time1)
+                let endTime = new Date(value);
+                if (startTime >= endTime) {
+                    callback(new Error('结束时间不得早于开始时间'));
+                }
+                else {
+                    callback();
+                }
+            }
+        }
         return {
             svgWidth: 0,
             username: "lanran",
             addingEvent: false,
+            sendingEvent: false,
+            form: {
+                date: '',
+                time1: '',
+                time2: '',
+                name: 'lanran',
+                freq: 'once',
+            },
+            rules: {
+                date: [{required: true, message: '请选择开始日期', trigger: 'blur'}],
+                time1: [{type: 'date', required: true, message: '请选择开始时间', trigger: 'blur'}],
+                time2: [{type: 'date', required: true, validator: checkTime, trigger: 'change'}],
+                event: [{required: true, message: '请填写事件', trigger: 'blur'}],
+            },
         }
     },
     mounted() {
@@ -13,6 +45,58 @@ const Todo = {
         this.animateDraw();
     },
     methods: {
+        resetEventForm() {
+            this.$refs['eventForm'].resetFields();
+        },
+        submitEvent() {
+            this.$refs['eventForm'].validate(v => {
+                if (!v) return;
+
+                function getTime(ts) {
+                    let t = new Date(ts);
+                    return t.getHours() * 3600 + t.getMinutes() * 60 + t.getSeconds();
+                }
+
+                let dt = new Date(this.form.date);
+                let params = {
+                    'name': this.form.name,
+                    'event': this.form.event,
+                    'year': dt.getFullYear(),
+                    'month': dt.getMonth() + 1,
+                    'day': dt.getDate(),
+                    'st_sec': getTime(this.form.time1),
+                    'en_sec': getTime(this.form.time2),
+                    'freq': this.form.freq
+                };
+                let data = Qs.stringify(params);
+
+                this.sendingEvent = true;
+                axios({
+                        method: 'post',
+                        url: 'http://localhost:3846/add_schedule',
+                        headers: {
+                            "Content-Type":'application/x-www-form-urlencoded; charset=UTF-8'
+                        },
+                        data: data
+                    })
+                    .then(response => {
+                        this.sendingEvent = false;
+                        let data = response.data;
+                        console.log(data);
+                        if (data.code != 0){
+                            ElementPlus.ElMessage.error(data.message);
+                        }
+                        else {
+                            ElementPlus.ElMessage.success('添加成功');
+                        }
+                        this.addingEvent = false;
+                    })
+                    .catch(error => {
+                        this.sendingEvent = false;
+                        ElementPlus.ElMessage.error(error);
+                    });
+            });
+        },
         changeName() {
             
         },

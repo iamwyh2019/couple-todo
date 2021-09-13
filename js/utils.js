@@ -2,12 +2,23 @@ const DAYLEN = 24*60*60;
 const radiusRatio = 0.40;
 const ringWidth = 12;
 
-var nowCircle;
+var nowCircle, alpha, svgWidth;
 
-function getUTCToday() {
-    let d1 = new Date();
-    let d2 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
-    return Math.floor(d2.getTime() / 1000);
+function circleX(alpha) {
+    let arc_center_r = svgWidth * radiusRatio + ringWidth / 2;
+    return svgWidth / 2 + arc_center_r * Math.sin(alpha);
+}
+
+function circleY(alpha) {
+    let arc_center_r = svgWidth * radiusRatio + ringWidth / 2;
+    return svgWidth / 2 - arc_center_r * Math.cos(alpha);
+}
+
+function getNowTimestamp(timezone) {
+    let now = new Date();
+    let utcnow = now.getTime();
+    tznow = new Date(utcnow + timezone*60*60*1000);
+    return tznow.getUTCHours()*60*60 + tznow.getUTCMinutes()*60 + tznow.getUTCSeconds();
 }
 
 function getFormData(form) {
@@ -32,7 +43,8 @@ function getFormData(form) {
     return data;
 }
 
-function animateDraw(svgWidth, cirColor) {
+function animateDraw(sWidth, cirColor, timezone) {
+    svgWidth = sWidth;
     let animationTime = 700;
     let arc_generator = d3.arc()
         .innerRadius(svgWidth * radiusRatio)
@@ -67,6 +79,8 @@ function animateDraw(svgWidth, cirColor) {
         .attr('r', Math.ceil(ringWidth*3/4))
         .attr('fill', cirColor)
         .style('opacity', 0);
+    
+    alpha = 2*Math.PI * getNowTimestamp(timezone)/DAYLEN;
 
     adjustCirclePosition();
     setTimeout(() => {
@@ -77,18 +91,13 @@ function animateDraw(svgWidth, cirColor) {
             .style('opacity', 1);
     }, animationTime);
     setInterval(() => {
+        alpha += 1;
         adjustCirclePosition();
     }, 4*60*1000);
 
     function adjustCirclePosition() {
-        let arc_center_r = svgWidth * radiusRatio + ringWidth / 2;
-        let nowTime = Math.floor((new Date().getTime())/1000),
-            utctoday = getUTCToday();
-        let alpha = 2 * Math.PI * ((nowTime-utctoday)/DAYLEN);
-        let cx = svgWidth / 2 + arc_center_r * Math.sin(alpha);
-        let cy = svgWidth / 2 - arc_center_r * Math.cos(alpha);
-        nowCircle.attr('cx', cx)
-            .attr('cy', cy)
+        nowCircle.attr('cx', circleX(alpha))
+            .attr('cy', circleY(alpha))
     }
 }
 
@@ -105,12 +114,14 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth) {
     let dataEnter = d3.select('svg').select(gname).selectAll('path')
         .data(eventList)
         .enter();
-    dataEnter.append('path')
+    let pathEnter = dataEnter.append('path')
         .attr("d", arc_generator)
         .style('fill', col)
         .attr('transform', `translate(${svgWidth/2},${svgWidth/2})`)
-        .style('opacity', 0)
-        .transition()
+        .style('opacity', 0);
+    pathEnter.append('title')
+        .text(d => d.event);
+    pathEnter.transition()
         .duration(500)
         .ease(Math.sqrt)
         .style('opacity', 1);
@@ -135,6 +146,22 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth) {
     */
 }
 
-function changeCircleColor(cirColor) {
-    nowCircle.attr('fill', cirColor);
+function changeCircleUser(cirColor, timezone) {
+    let newAlpha = Math.PI*2 * (getNowTimestamp(timezone)/DAYLEN);
+    var interpolate = d3.interpolate(alpha, newAlpha);
+    nowCircle.transition()
+        .duration(500)
+        .ease(t => (1/(1+Math.exp(-10.5*t+5))-0.00669285)/0.98923701)
+        .attrTween("cx", function(d) {
+            return function(t){
+                return circleX(interpolate(t));
+            }
+        })
+        .attrTween("cy", function(d) {
+            return function(t){
+                return circleY(interpolate(t));
+            }
+        })
+        .style('fill', cirColor);
+    alpha = newAlpha;
 }

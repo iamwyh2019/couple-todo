@@ -28,6 +28,10 @@ const Todo = {
                 lanran: '#6EA8FE',
                 xiaowu: 'lightpink'
             },
+            timezone: {
+                lanran: -5,
+                xiaowu: +8
+            },
             form: {
                 date: '',
                 time1: '',
@@ -104,7 +108,8 @@ const Todo = {
             this.addingEvent = true;
         },
         Draw() {
-            animateDraw(this.svgWidth, this.themeColor[this.username]);
+            nowTimezone = -(new Date().getTimezoneOffset())/60;
+            animateDraw(this.svgWidth, this.themeColor[this.username], nowTimezone);
         },
         refreshEventData(delay = 0) {
             var loadingInstance = ElementPlus.ElLoading.service({text: '正在获取日程'});
@@ -122,18 +127,20 @@ const Todo = {
                 }
                 else {
                     this.eventData = data.data;
-                    let xiaowuDist, lanranDist, cirColor;
+                    let xiaowuDist, lanranDist;
+
+                    let cirColor = this.themeColor[this.username];
+                    let timezone = this.timezone[this.username];
+
                     if (this.username == 'lanran') {
                         xiaowuDist = 20;
                         lanranDist = -20;
-                        cirColor = this.themeColor.lanran;
                     }
                     else {
                         lanranDist = 20;
                         xiaowuDist = -20;
-                        cirColor = this.themeColor.xiaowu;
                     }
-                    changeCircleColor(cirColor);
+                    changeCircleUser(cirColor, timezone);
                     setTimeout(() => {
                         animateDrawEvents(this.eventData.xiaowu, xiaowuDist,
                             this.themeColor.xiaowu, '#events-xiaowu', this.svgWidth);

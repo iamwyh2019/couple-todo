@@ -7,7 +7,5 @@ body {
 
 .clock {
     text-align: center;
-    position: absolute;
-    left: 14%;
-    width: 72%;
+    width: 100%;
 }

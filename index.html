@@ -15,19 +15,23 @@
     </head>
     <body>
         <div id="todo-clock" class="clock">
-            <el-button
-            type="success"
-            style="position:absolute;right:0;"
-            @click="addEvent">加个日程</el-button>
-    
-            <el-radio-group
-            v-model="username"
-            style="margin-bottom: 20px;"
-            fill="plum"
-            @change="changeName">
-                <el-radio-button label="lanran">我是小染</el-radio-button>
-                <el-radio-button label="xiaowu">我是小吴</el-radio-button>
-            </el-radio-group>
+
+            <el-row>
+                <el-col :span="14" :offset="5">
+                    <el-radio-group
+                    v-model="username"
+                    fill="plum"
+                    @change="changeName">
+                        <el-radio-button label="lanran">我是小染</el-radio-button>
+                        <el-radio-button label="xiaowu">我是小吴</el-radio-button>
+                    </el-radio-group>
+                </el-col>
+                <el-col :span="2" :offset="1">
+                    <el-button
+                    type="success"
+                    @click="addEvent">加个日程</el-button>
+                </el-col>
+            </el-row>
 
             <el-divider><i class="el-icon-dessert"></i></el-divider>
 

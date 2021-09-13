@@ -2,6 +2,8 @@ const DAYLEN = 24*60*60;
 const radiusRatio = 0.40;
 const ringWidth = 12;
 
+var nowCircle;
+
 function getUTCToday() {
     let d1 = new Date();
     let d2 = new Date(d1.getFullYear(), d1.getMonth(), d1.getDate());
@@ -30,7 +32,7 @@ function getFormData(form) {
     return data;
 }
 
-function animateDraw(svgWidth) {
+function animateDraw(svgWidth, cirColor) {
     let animationTime = 700;
     let arc_generator = d3.arc()
         .innerRadius(svgWidth * radiusRatio)
@@ -60,10 +62,10 @@ function animateDraw(svgWidth) {
             }
         });
     
-    var nowCircle = d3.select('svg').select('#clock')
+    nowCircle = d3.select('svg').select('#clock')
         .append('circle')
         .attr('r', Math.ceil(ringWidth*3/4))
-        .attr('fill', '#409EFF')
+        .attr('fill', cirColor)
         .style('opacity', 0);
 
     adjustCirclePosition();
@@ -131,4 +133,8 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth) {
         .attr('text-anchor', 'middle')
         .text(d => d.event);
     */
+}
+
+function changeCircleColor(cirColor) {
+    nowCircle.attr('fill', cirColor);
 }

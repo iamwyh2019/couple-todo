@@ -24,8 +24,10 @@ const Todo = {
             addingEvent: false,
             sendingEvent: false,
             eventData: null,
-            xiaowuColor: 'lightpink',
-            lanranColor: '#6EA8FE',
+            themeColor: {
+                lanran: '#6EA8FE',
+                xiaowu: 'lightpink'
+            },
             form: {
                 date: '',
                 time1: '',
@@ -46,7 +48,7 @@ const Todo = {
     mounted() {
         let el_width = document.getElementById("todo-clock").offsetWidth;
         let window_height = document.documentElement.clientHeight;
-        this.svgWidth = Math.min(el_width, window_height) * 0.75;
+        this.svgWidth = Math.min(el_width, window_height * 0.85) * 0.9;
         this.refreshEventData(700);
         this.Draw();
     },
@@ -102,7 +104,7 @@ const Todo = {
             this.addingEvent = true;
         },
         Draw() {
-            animateDraw(this.svgWidth);
+            animateDraw(this.svgWidth, this.themeColor[this.username]);
         },
         refreshEventData(delay = 0) {
             var loadingInstance = ElementPlus.ElLoading.service({text: '正在获取日程'});
@@ -120,20 +122,23 @@ const Todo = {
                 }
                 else {
                     this.eventData = data.data;
-                    let xiaowuDist, lanranDist;
+                    let xiaowuDist, lanranDist, cirColor;
                     if (this.username == 'lanran') {
                         xiaowuDist = 20;
                         lanranDist = -20;
+                        cirColor = this.themeColor.lanran;
                     }
                     else {
                         lanranDist = 20;
                         xiaowuDist = -20;
+                        cirColor = this.themeColor.xiaowu;
                     }
+                    changeCircleColor(cirColor);
                     setTimeout(() => {
                         animateDrawEvents(this.eventData.xiaowu, xiaowuDist,
-                            this.xiaowuColor, '#events-xiaowu', this.svgWidth);
+                            this.themeColor.xiaowu, '#events-xiaowu', this.svgWidth);
                         animateDrawEvents(this.eventData.lanran, lanranDist,
-                            this.lanranColor, '#events-lanran', this.svgWidth);
+                            this.themeColor.lanran, '#events-lanran', this.svgWidth);
                     }, delay);
                 }
                 loadingInstance.close();

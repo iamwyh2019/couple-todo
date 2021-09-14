@@ -5,6 +5,7 @@ const urgent = 15*60; // 15 mins
 
 var nowCircle, alpha, svgWidth, nowTimezone;
 var intervalEvent = {}
+var circleMoveEvent;
 
 function circleX(alpha) {
     let arc_center_r = svgWidth * radiusRatio + ringWidth / 2;
@@ -86,13 +87,15 @@ function animateDraw(sWidth, cirColor, timezone) {
 
     adjustCirclePosition();
     setTimeout(() => {
-        nowCircle
-            .transition()
+        nowCircle.transition()
             .duration(500)
             .ease(Math.sqrt)
             .style('opacity', 1);
     }, animationTime);
-    setInterval(() => {
+
+    if (circleMoveEvent)
+        clearInterval(circleMoveEvent);
+    circleMoveEvent = setInterval(() => {
         alpha += 2*Math.PI / 360;
         adjustCirclePosition();
     }, 4*60*1000);

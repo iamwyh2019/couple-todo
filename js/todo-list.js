@@ -23,7 +23,11 @@ const Todo = {
             username: "lanran",
             addingEvent: false,
             sendingEvent: false,
-            eventData: null,
+            showingEvents: false,
+            eventData: {
+                lanran: [],
+                xiaowu: [],
+            },
             themeColor: {
                 lanran: '#6EA8FE',
                 xiaowu: 'lightpink'
@@ -154,6 +158,15 @@ const Todo = {
                 loadingInstance.close();
                 ElementPlus.ElMessage.error('获取日程失败: 未知错误');
             });
+        },
+        showEvents() {
+            this.showingEvents = true;
+        },
+        timeFormatterSt(row, column) {
+            return timeFormatter(row.st_sec);
+        },
+        timeFormatterEn(row, column) {
+            return timeFormatter(row.en_sec);
         }
     }
 }

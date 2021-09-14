@@ -165,3 +165,10 @@ function changeCircleUser(cirColor, timezone) {
         .style('fill', cirColor);
     alpha = newAlpha;
 }
+
+function timeFormatter(sec) {
+    hour = Math.floor(sec/3600);
+    minutes = Math.floor((sec%3600)/60);
+    padding = (minutes < 10)? '0': '';
+    return hour + ':' + padding + minutes;
+}

@@ -15,6 +15,7 @@
     </head>
     <body>
         <div id="todo-clock" class="clock">
+            
 
             <el-row>
                 <el-col :span="12" :offset="6">
@@ -26,10 +27,13 @@
                         <el-radio-button label="xiaowu">我是小吴</el-radio-button>
                     </el-radio-group>
                 </el-col>
-                <el-col :span="4">
+                <el-col :span="6" style="text-align: left;">
                     <el-button
                     type="success"
                     @click="addEvent">加个日程</el-button>
+                    <el-button
+                    @click="showEvents"
+                    type="primary">今日日程</el-button>
                 </el-col>
             </el-row>
 
@@ -125,6 +129,41 @@
                     style="font-size:2.2rem;position:absolute;"
                     v-if="sendingEvent"></i>
                 </span>
+            </el-dialog>
+
+            <el-dialog
+            title="今日日程"
+            v-model="showingEvents"
+            :close-on-click-modal=false>
+                <el-scrollbar max-height="400px">
+                <el-divider>小染的日程</el-divider>
+
+                <el-table stripe :data="eventData.lanran"
+                :default-sort="{prop:'st_sec'}">
+                    <el-table-column prop="event" label="事件">
+                    </el-table-column>
+                    <el-table-column prop="st_sec" label="开始时间" sortable
+                    :formatter="timeFormatterSt">
+                    </el-table-column>
+                    <el-table-column prop="en_sec" label="结束时间" sortable
+                    :formatter="timeFormatterEn">
+                    </el-table-column>
+                </el-table>
+
+                <el-divider>小吴的日程</el-divider>
+
+                <el-table stripe :data="eventData.xiaowu"
+                :default-sort="{prop:'st_sec'}">
+                    <el-table-column prop="event" label="事件">
+                    </el-table-column>
+                    <el-table-column prop="st_sec" label="开始时间" sortable
+                    :formatter="timeFormatterSt">
+                    </el-table-column>
+                    <el-table-column prop="en_sec" label="结束时间" sortable
+                    :formatter="timeFormatterEn">
+                    </el-table-column>
+                </el-table>
+                </el-scrollbar>
             </el-dialog>
 
 

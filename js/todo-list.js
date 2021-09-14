@@ -62,7 +62,8 @@ const Todo = {
     },
     methods: {
         resetEventForm() {
-            this.$refs['eventForm'].resetFields();
+            if (this.$refs['eventForm'])
+                this.$refs['eventForm'].resetFields();
         },
         dialogOpen() {
             this.resetEventForm();

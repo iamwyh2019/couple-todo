@@ -1,8 +1,10 @@
 const DAYLEN = 24*60*60;
 const radiusRatio = 0.40;
 const ringWidth = 12;
+const urgent = 15*60; // 15 mins
 
-var nowCircle, alpha, svgWidth;
+var nowCircle, alpha, svgWidth, nowTimezone;
+var intervalEvent = {}
 
 function circleX(alpha) {
     let arc_center_r = svgWidth * radiusRatio + ringWidth / 2;
@@ -101,7 +103,7 @@ function animateDraw(sWidth, cirColor, timezone) {
     }
 }
 
-function animateDrawEvents(eventList, gap, col, gname, svgWidth) {
+function animateDrawEvents(eventList, gap, col, gname, svgWidth, username) {
     for (let i=0; i<eventList.length; ++i) {
         eventList[i].startAngle = 2*Math.PI * eventList[i].st_sec / DAYLEN;
         eventList[i].endAngle = 2*Math.PI * eventList[i].en_sec / DAYLEN;
@@ -111,7 +113,9 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth) {
         .innerRadius(svgWidth * radiusRatio + gap)
         .outerRadius(svgWidth * radiusRatio + gap + ringWidth);
     d3.select('svg').select(gname).selectAll('path').remove();
-    let dataEnter = d3.select('svg').select(gname).selectAll('path')
+
+    var groupSelect = d3.select('svg').select(gname);
+    let dataEnter = groupSelect.selectAll('path')
         .data(eventList)
         .enter();
     let pathEnter = dataEnter.append('path')
@@ -124,7 +128,26 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth) {
     pathEnter.transition()
         .duration(500)
         .ease(Math.sqrt)
+        .style('opacity', 0.7);
+
+    groupSelect.select('text').remove();
+    groupSelect.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('transform', `translate(${svgWidth/2},${svgWidth/2})`)
+        .attr('y', gap)
+        .text(findEvents(eventList, username))
+        .style('opacity', 0)
+        .transition()
+        .duration(500)
+        .ease(Math.sqrt)
         .style('opacity', 1);
+    
+    if (intervalEvent[username])
+        clearInterval(intervalEvent[username]);
+    intervalEvent[username] = setInterval(() => {
+        groupSelect.select('text')
+            .text(findEvents(eventList, username));
+    }, 60*1000);
 
     textx = (d) => {
         cangle = (d.startAngle + d.endAngle) / 2;
@@ -147,6 +170,7 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth) {
 }
 
 function changeCircleUser(cirColor, timezone) {
+    nowTimezone = timezone;
     let newAlpha = Math.PI*2 * (getNowTimestamp(timezone)/DAYLEN);
     var interpolate = d3.interpolate(alpha, newAlpha);
     nowCircle.transition()
@@ -171,4 +195,30 @@ function timeFormatter(sec) {
     minutes = Math.floor((sec%3600)/60);
     padding = (minutes < 10)? '0': '';
     return hour + ':' + padding + minutes;
+}
+
+function findEvents(events, name) {
+    let nowSec = getNowTimestamp(nowTimezone);
+
+    // step 1: find an ongoing event
+    let nowEvents = events.filter(d => (d.st_sec <= nowSec && d.en_sec >= nowSec));
+    if (nowEvents.length > 0)
+        return `${name}正在: ${nowEvents[0].event}`;
+    
+    // step 2: find most recent incoming event
+    let nextEvents = events.filter(d => d.st_sec > nowSec);
+    if (nextEvents.length > 0) {
+        let minComingIndex = 0;
+        for (let i = 1; i < nextEvents.length; ++i) {
+            if (nextEvents[i].st_sec < nextEvents[minComingIndex].st_sec){
+                minComingIndex = i;
+            }
+        }
+        let eventText = nextEvents[minComingIndex].event;
+        if (nextEvents[minComingIndex].st_sec - nowSec <= urgent)
+            return `${name}很快要: ${eventText}`;
+        return `${name}接下来: ${eventText}`;
+    }
+
+    return `${name}今天没有日程了~`;
 }

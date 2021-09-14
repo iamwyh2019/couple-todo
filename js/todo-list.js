@@ -148,9 +148,11 @@ const Todo = {
                     changeCircleUser(cirColor, timezone);
                     setTimeout(() => {
                         animateDrawEvents(this.eventData.xiaowu, xiaowuDist,
-                            this.themeColor.xiaowu, '#events-xiaowu', this.svgWidth);
+                            this.themeColor.xiaowu, '#events-xiaowu',
+                            this.svgWidth, '小吴');
                         animateDrawEvents(this.eventData.lanran, lanranDist,
-                            this.themeColor.lanran, '#events-lanran', this.svgWidth);
+                            this.themeColor.lanran, '#events-lanran',
+                            this.svgWidth, '小染');
                     }, delay);
                 }
                 loadingInstance.close();

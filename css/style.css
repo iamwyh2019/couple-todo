@@ -9,3 +9,10 @@ body {
     text-align: center;
     width: 100%;
 }
+
+.el-table .warning-row {
+    --el-table-tr-background-color: var(--el-color-warning-lighter);
+}
+.el-table .success-row {
+    --el-table-tr-background-color: var(--el-color-success-lighter);
+}

@@ -167,6 +167,14 @@ const Todo = {
         },
         timeFormatterEn(row, column) {
             return timeFormatter(row.en_sec);
+        },
+        tableRowStatus({row, rowIndex}) {
+            let nowSec = getNowTimestamp(this.timezone[this.username]);
+            if (nowSec >= row.st_sec && nowSec <= row.en_sec)
+                return 'success-row';
+            if (nowSec < row.st_sec && nowSec >= row.st_sec - 15*60)
+                return 'warning-row';
+            return '';
         }
     }
 }

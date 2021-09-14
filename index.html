@@ -139,7 +139,7 @@
                 <el-divider>小染的日程</el-divider>
 
                 <el-table stripe :data="eventData.lanran"
-                :default-sort="{prop:'st_sec'}">
+                :default-sort="{prop:'st_sec'}" :row-class-name="tableRowStatus">
                     <el-table-column prop="event" label="事件">
                     </el-table-column>
                     <el-table-column prop="st_sec" label="开始时间" sortable
@@ -153,7 +153,7 @@
                 <el-divider>小吴的日程</el-divider>
 
                 <el-table stripe :data="eventData.xiaowu"
-                :default-sort="{prop:'st_sec'}">
+                :default-sort="{prop:'st_sec'}" :row-class-name="tableRowStatus">
                     <el-table-column prop="event" label="事件">
                     </el-table-column>
                     <el-table-column prop="st_sec" label="开始时间" sortable

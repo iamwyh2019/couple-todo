@@ -133,12 +133,14 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth, username) {
         .ease(Math.sqrt)
         .style('opacity', 0.7);
 
-    groupSelect.select('text').remove();
-    groupSelect.append('text')
+    groupSelect.selectAll('text').remove();
+    groupSelect.selectAll('text').data(findEvents(eventList, username))
+        .enter()
+        .append('text')
         .attr('text-anchor', 'middle')
         .attr('transform', `translate(${svgWidth/2},${svgWidth/2})`)
-        .attr('y', gap)
-        .text(findEvents(eventList, username))
+        .attr('y', (d,i) => (i+1)*gap)
+        .text(d => d)
         .style('opacity', 0)
         .transition()
         .duration(500)
@@ -148,8 +150,10 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth, username) {
     if (intervalEvent[username])
         clearInterval(intervalEvent[username]);
     intervalEvent[username] = setInterval(() => {
-        groupSelect.select('text')
-            .text(findEvents(eventList, username));
+        let texts = findEvents(eventList, username);
+        groupSelect.selectAll('text')
+            .data(texts)
+            .text(d => d);
     }, 60*1000);
 
     textx = (d) => {
@@ -201,12 +205,13 @@ function timeFormatter(sec) {
 }
 
 function findEvents(events, name) {
-    let nowSec = getNowTimestamp(nowTimezone);
+    let nowSec = getNowTimestamp(nowTimezone),
+        ongoingText, nextText;
 
     // step 1: find an ongoing event
     let nowEvents = events.filter(d => (d.st_sec <= nowSec && d.en_sec >= nowSec));
     if (nowEvents.length > 0)
-        return `${name}正在: ${nowEvents[0].event}`;
+        ongoingText = `${name}正在: ${nowEvents[0].event}`;
     
     // step 2: find most recent incoming event
     let nextEvents = events.filter(d => d.st_sec > nowSec);
@@ -219,9 +224,14 @@ function findEvents(events, name) {
         }
         let eventText = nextEvents[minComingIndex].event;
         if (nextEvents[minComingIndex].st_sec - nowSec <= urgent)
-            return `${name}很快要: ${eventText}`;
-        return `${name}接下来: ${eventText}`;
+            nextText = `${name}很快要: ${eventText}`;
+        else
+            nextText = `${name}接下来: ${eventText}`;
     }
 
-    return `${name}今天没有日程了~`;
+    if (ongoingText && nextText)
+        return [ongoingText, nextText];
+    if (ongoingText) return [ongoingText];
+    if (nextText) return [nextText];
+    return [`${name}今天没有日程了~`];
 }

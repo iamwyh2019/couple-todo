@@ -91,7 +91,7 @@ function animateDraw(sWidth, cirColor, timezone) {
             .style('opacity', 1);
     }, animationTime);
     setInterval(() => {
-        alpha += 1;
+        alpha += 2*Math.PI / 360;
         adjustCirclePosition();
     }, 4*60*1000);
 

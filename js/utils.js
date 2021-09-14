@@ -154,11 +154,19 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth, username) {
     if (intervalEvent[username])
         clearInterval(intervalEvent[username]);
     intervalEvent[username] = setInterval(() => {
-        let texts = findEvents(eventList, username);
-        groupSelect.selectAll('text')
-            .data(texts)
+        let textList = findEvents(eventList, username);
+        groupSelect.selectAll('text').remove();
+        groupSelect.selectAll('text').data(textList)
+            .enter()
+            .append('text')
+            .attr('text-anchor', 'middle')
+            .attr('transform', `translate(${svgWidth/2},${svgWidth/2})`)
+            .attr('y', (d,i) => {
+                if (gap > 0) return (i+1)*gap
+                else return (textList.length-i)*gap;
+            })
             .text(d => d);
-    }, 60*1000);
+        }, 60*1000);
 
     textx = (d) => {
         cangle = (d.startAngle + d.endAngle) / 2;

@@ -132,14 +132,18 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth, username) {
         .duration(500)
         .ease(Math.sqrt)
         .style('opacity', 0.7);
-
+    
+    let textList = findEvents(eventList, username);
     groupSelect.selectAll('text').remove();
-    groupSelect.selectAll('text').data(findEvents(eventList, username))
+    groupSelect.selectAll('text').data(textList)
         .enter()
         .append('text')
         .attr('text-anchor', 'middle')
         .attr('transform', `translate(${svgWidth/2},${svgWidth/2})`)
-        .attr('y', (d,i) => (i+1)*gap)
+        .attr('y', (d,i) => {
+            if (gap > 0) return (i+1)*gap
+            else return (textList.length-i)*gap;
+        })
         .text(d => d)
         .style('opacity', 0)
         .transition()

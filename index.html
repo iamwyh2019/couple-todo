@@ -87,7 +87,7 @@
                             </el-form-item>
                         </el-col>
                     </el-form-item>
-                    <el-form-item label="我是谁呀">
+                    <el-form-item label="我是谁呀" required>
                         <el-col :span="11">
                             <el-radio-group
                             v-model="form.name"
@@ -103,7 +103,7 @@
                             </el-tooltip>
                         </el-col>
                     </el-form-item>
-                    <el-form-item  label="事件频率">
+                    <el-form-item  label="事件频率" required>
                         <el-col :span="11">
                             <el-radio-group
                             v-model="form.freq"
@@ -134,11 +134,12 @@
             <el-dialog
             title="今日日程"
             v-model="showingEvents"
-            :close-on-click-modal=false>
+            :close-on-click-modal=false
+            width="70%">
                 <el-scrollbar max-height="400px">
                 <el-divider>小染的日程</el-divider>
 
-                <el-table stripe :data="eventData.lanran"
+                <el-table :data="eventData.lanran"
                 :default-sort="{prop:'st_sec'}" :row-class-name="tableRowStatus">
                     <el-table-column prop="event" label="事件">
                     </el-table-column>
@@ -152,7 +153,7 @@
 
                 <el-divider>小吴的日程</el-divider>
 
-                <el-table stripe :data="eventData.xiaowu"
+                <el-table :data="eventData.xiaowu"
                 :default-sort="{prop:'st_sec'}" :row-class-name="tableRowStatus">
                     <el-table-column prop="event" label="事件">
                     </el-table-column>

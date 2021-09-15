@@ -173,6 +173,8 @@ const Todo = {
         },
         tableRowStatus({row, rowIndex}) {
             let nowSec = getNowTimestamp(this.timezone[this.username]);
+            if (nowSec > row.en_sec)
+                return 'info-row';
             if (nowSec >= row.st_sec && nowSec <= row.en_sec)
                 return 'success-row';
             if (nowSec < row.st_sec && nowSec >= row.st_sec - 15*60)

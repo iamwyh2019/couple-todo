@@ -16,3 +16,7 @@ body {
 .el-table .success-row {
     --el-table-tr-background-color: var(--el-color-success-lighter);
 }
+
+.el-table .info-row {
+    --el-table-tr-background-color: var(--el-color-info-lighter);
+}

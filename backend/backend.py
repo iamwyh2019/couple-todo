@@ -97,5 +97,6 @@ def remove_schedule():
         "message": ""
     })
 if __name__ == "__main__":
-    server = pywsgi.WSGIServer(('0.0.0.0', 3846), app)
+    server = pywsgi.WSGIServer(('0.0.0.0', 3846), app,
+        keyfile = 'cert/privkey.pem', certfile = 'cert/fullchain.pem')
     server.serve_forever()

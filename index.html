@@ -149,6 +149,14 @@
                     <el-table-column prop="en_sec" label="结束时间" sortable
                     :formatter="timeFormatterEn">
                     </el-table-column>
+                    <el-table-column fixed="right">
+                        <template #default="scope">
+                            <el-button
+                            type="danger"
+                            size="medium"
+                            @click="deleteItem(scope.row.id)">删除</el-button>
+                        </template>
+                    </el-table-column>
                 </el-table>
 
                 <el-divider>小吴的日程</el-divider>
@@ -162,6 +170,14 @@
                     </el-table-column>
                     <el-table-column prop="en_sec" label="结束时间" sortable
                     :formatter="timeFormatterEn">
+                    </el-table-column>
+                    <el-table-column fixed="right">
+                        <template #default="scope">
+                            <el-button
+                            type="danger"
+                            size="medium"
+                            @click="deleteItem(scope.row.id)">删除</el-button>
+                        </template>
                     </el-table-column>
                 </el-table>
                 </el-scrollbar>

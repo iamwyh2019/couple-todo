@@ -178,6 +178,59 @@ const Todo = {
             if (nowSec < row.st_sec && nowSec >= row.st_sec - 15*60)
                 return 'warning-row';
             return '';
-        }
+        },
+        deleteItem(id) {
+            this.$confirm("确认删除该日程？<br>如果这是周期日程，将会删除<b>全部</b>而非单次日程！", "删除日程", {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning',
+                dangerouslyUseHTMLString: true,
+                showInput: true,
+                inputPlaceholder: '请输入姓名拼音全拼以验证身份',
+                beforeClose: this.deleteDialogClose(id),
+            }).catch(() => {});
+        },
+        deleteDialogClose(id) {
+            let apiSource = this.getAPISource();
+            let successCallback = this.refreshEventData;
+            return function(action, instance, done) {
+                if (action != "confirm") {
+                    done();
+                    return;
+                }
+                validate = instance.inputValue;
+                let params = {
+                    id: id,
+                    validate: validate
+                };
+                let data = Qs.stringify(params);
+
+                var loadingInstance = ElementPlus.ElLoading.service({text: '请稍等'});
+                axios({
+                    method: 'post',
+                    url: apiSource + '/remove_schedule',
+                    headers: {
+                        "Content-Type":'application/x-www-form-urlencoded; charset=UTF-8'
+                    },
+                    data: data,
+                })
+                .then(response => {
+                    loadingInstance.close();
+                    data = response.data;
+                    if (data.code != 0) {
+                        ElementPlus.ElMessage.error('删除失败: ' + data.message);
+                    }
+                    else {
+                        ElementPlus.ElMessage.success('删除成功');
+                        done();
+                        successCallback();
+                    }
+                })
+                .catch(error => {
+                    loadingInstance.close();
+                    ElementPlus.ElMessage.error('删除失败: 未知原因');
+                });
+            }
+        },
     }
 }

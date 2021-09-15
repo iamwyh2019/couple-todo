@@ -76,6 +76,13 @@ def add_schedule():
 @app.route('/remove_schedule', methods = ["POST"])
 def remove_schedule():
     event_id = request.form.get("id", type = int, default = -1)
+    validate = request.form.get('validate', type = str, default = '')
+
+    if validate != val_pwd:
+        return jsonify({
+            "code": 5,
+            "message": "身份验证失败"
+        })
     if event_id == -1:
         return jsonify({
             "code": 3,

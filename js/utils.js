@@ -84,7 +84,6 @@ function animateDraw(sWidth, cirColor, timezone) {
         .style('opacity', 0);
     
     alpha = 2*Math.PI * getNowTimestamp(timezone)/DAYLEN;
-
     adjustCirclePosition();
     setTimeout(() => {
         nowCircle.transition()
@@ -96,9 +95,10 @@ function animateDraw(sWidth, cirColor, timezone) {
     if (circleMoveEvent)
         clearInterval(circleMoveEvent);
     circleMoveEvent = setInterval(() => {
-        alpha += 2*Math.PI / 360;
+        if (!nowTimezone) return;
+        alpha = 2*Math.PI * getNowTimestamp(nowTimezone)/DAYLEN;
         adjustCirclePosition();
-    }, 4*60*1000);
+    }, 60*1000);
 
     function adjustCirclePosition() {
         nowCircle.attr('cx', circleX(alpha))

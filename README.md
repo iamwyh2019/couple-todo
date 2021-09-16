@@ -42,7 +42,11 @@ Please be VERY cautious deleting an event. The event is **physically deleted** a
 
 
 ## Open-source
-This project can only be used for non-commercial purposes. You don't need to inform me when you use it, but you have to specify the source.
+This project is open-sourced under Apache License 2.0, which means:
+
+- You are free to use, modify, and re-distribute any part of this project, for non-commercial and commercial use, and you can stay close-sourced.
+- You have to place this license and the copyright notice in your work, and state your changes to the original code.
+- We give NO guarantee to, and is NOT for, any part of this project, or any result incurred from it. And more broadly, you may NOT use this project to do anything against us.
 
 
 

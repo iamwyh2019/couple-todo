@@ -36,7 +36,7 @@ Please be VERY cautious deleting an event. The event is **physically deleted** a
 ## TODO
 
 - [x] Add buttons "show yesterday" and "show tomorrow". We have added backend support (see the `offset` parameter) but are still discussing page layouts.
-- [ ] Add a tooltip for pressing event curves. The main difficulty is the interactions between Vue, element-plus, and d3;
+- [ ] Add a tooltip for pressing event curves. The main difficulty is the interactions between Vue, element-plus, and d3.
 - [ ] Add an "edit" button on event table. (Is there a need for that?)
 
 
@@ -46,7 +46,7 @@ This project is open-sourced under Apache License 2.0, which means:
 
 - You are free to use, modify, and re-distribute any part of this project, for non-commercial and commercial use, and you can stay close-sourced.
 - You have to place this license and the copyright notice in your work, and state your changes to the original code.
-- We give NO guarantee to, and is NOT for, any part of this project, or any result incurred from it. And more broadly, you may NOT use this project to do anything against us.
+- We give NO guarantee to, and is NOT responsible for, any part of this project, or any result incurred from it. And more broadly, you may NOT use this project to do anything against us.
 
 
 

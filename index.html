@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width,initial-scale=1.0" />
         <link rel="shortcut icon" href="assets/head.ico"type="image/x-icon" />
         <title>Ring Clock</title>
-        <link rel="stylesheet" href="css/style.css?ver=2">
+        <link rel="stylesheet" href="css/style.css?ver=3">
         <link rel="stylesheet" href="css/index.css">
         <script src="js/vue.global.prod.js"></script>
         <script src="js/index.full.js"></script>
@@ -28,17 +28,25 @@
                     </el-radio-group>
                 </el-col>
                 <el-col :span="8" style="text-align: left;">
-                    <el-button
-                    type="success"
-                    @click="addEvent">加个日程</el-button>
-                    <el-button
-                    @click="showEvents"
-                    type="primary">今日日程</el-button>
+                    <el-button-group>
+                        <el-button
+                        type="success"
+                        @click="addEvent">加个日程</el-button>
+                        <el-button
+                        @click="showEvents"
+                        type="primary">本日日程</el-button>
+                    </el-button-group>
                 </el-col>
             </el-row>
 
             <el-divider><i class="el-icon-dessert"></i></el-divider>
 
+            <el-button-group>
+                <el-button icon="el-icon-arrow-left" @click="prevDay" circle></el-button>
+                <el-button @click="backToday">{{todayText}}</el-button>
+                <el-button icon="el-icon-arrow-right" @click="nextDay" circle></el-button>
+            </el-button-group>
+            <br>
             <svg :width="svgWidth" :height="svgWidth">
                 <g id="clock"></g>
                 <g id="events-xiaowu"></g>
@@ -132,7 +140,7 @@
             </el-dialog>
 
             <el-dialog
-            title="今日日程"
+            :title="todayEventTitle"
             v-model="showingEvents"
             :close-on-click-modal=false
             width="70%">
@@ -186,8 +194,8 @@
 
         </div>
 
-        <script src="js/todo-list.js?ver=2"></script>
-        <script src="js/utils.js?ver=2"></script>
+        <script src="js/todo-list.js?ver=3"></script>
+        <script src="js/utils.js?ver=3"></script>
         <script>
             Vue.createApp(Todo).use(ElementPlus).mount("#todo-clock");
         </script>

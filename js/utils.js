@@ -3,9 +3,10 @@ const radiusRatio = 0.40;
 const ringWidth = 12;
 const urgent = 15*60; // 15 mins
 
-var nowCircle, alpha, svgWidth, nowTimezone;
+var nowCircle, alpha, svgWidth, nowTimezone, nowOffset;
 var intervalEvent = {}
 var circleMoveEvent;
+var dayChinese = {1: '一', 2: '二', 3: '三', 4: '四', 5: '五', 6: '六', 0: '天'};
 
 function circleX(alpha) {
     let arc_center_r = svgWidth * radiusRatio + ringWidth / 2;
@@ -17,11 +18,26 @@ function circleY(alpha) {
     return svgWidth / 2 - arc_center_r * Math.cos(alpha);
 }
 
-function getNowTimestamp(timezone) {
+function getNowTimestamp(timezone, offset) {
     let now = new Date();
     let utcnow = now.getTime();
-    tznow = new Date(utcnow + timezone*60*60*1000);
+    tznow = new Date(utcnow + timezone*60*60*1000 + offset*24*60*60*1000);
     return tznow.getUTCHours()*60*60 + tznow.getUTCMinutes()*60 + tznow.getUTCSeconds();
+}
+
+function getNowTime(timezone, offset) {
+    let now = new Date();
+    let utcnow = now.getTime();
+    tznow = new Date(utcnow + timezone*60*60*1000 + offset*24*60*60*1000);
+    return tznow;
+}
+
+function getTodayText(timezone, offset, withDay = true) {
+    let now = getNowTime(timezone, offset);
+    if (withDay)
+        return `${now.getUTCMonth()+1}/${now.getUTCDate()} 星期${dayChinese[now.getUTCDay()]}`;
+    else
+        return `${now.getUTCMonth()+1}月${now.getUTCDate()}日`;
 }
 
 function getFormData(form) {
@@ -83,7 +99,7 @@ function animateDraw(sWidth, cirColor, timezone) {
         .attr('fill', cirColor)
         .style('opacity', 0);
     
-    alpha = 2*Math.PI * getNowTimestamp(timezone)/DAYLEN;
+    alpha = 2*Math.PI * getNowTimestamp(timezone, 0)/DAYLEN;
     adjustCirclePosition();
     setTimeout(() => {
         nowCircle.transition()
@@ -96,13 +112,13 @@ function animateDraw(sWidth, cirColor, timezone) {
         clearInterval(circleMoveEvent);
     circleMoveEvent = setInterval(() => {
         if (!nowTimezone) return;
-        alpha = 2*Math.PI * getNowTimestamp(nowTimezone)/DAYLEN;
+        alpha = 2*Math.PI * getNowTimestamp(nowTimezone, nowOffset)/DAYLEN;
         adjustCirclePosition();
     }, 60*1000);
 
     function adjustCirclePosition() {
         nowCircle.attr('cx', circleX(alpha))
-            .attr('cy', circleY(alpha))
+            .attr('cy', circleY(alpha));
     }
 }
 
@@ -133,8 +149,9 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth, username) {
         .ease(Math.sqrt)
         .style('opacity', 0.7);
     
-    let textList = findEvents(eventList, username);
     groupSelect.selectAll('text').remove();
+
+    let textList = findEvents(eventList, username);
     groupSelect.selectAll('text').data(textList)
         .enter()
         .append('text')
@@ -188,9 +205,10 @@ function animateDrawEvents(eventList, gap, col, gname, svgWidth, username) {
     */
 }
 
-function changeCircleUser(cirColor, timezone) {
+function changeCircleUser(cirColor, timezone, offset) {
     nowTimezone = timezone;
-    let newAlpha = Math.PI*2 * (getNowTimestamp(timezone)/DAYLEN);
+    nowOffset = offset;
+    let newAlpha = Math.PI*2 * (getNowTimestamp(timezone, offset)/DAYLEN);
     var interpolate = d3.interpolate(alpha, newAlpha);
     nowCircle.transition()
         .duration(500)
@@ -205,7 +223,8 @@ function changeCircleUser(cirColor, timezone) {
                 return circleY(interpolate(t));
             }
         })
-        .style('fill', cirColor);
+        .style('fill', cirColor)
+        .style('opacity', (nowOffset == 0)? 1: 0);
     alpha = newAlpha;
 }
 
@@ -217,7 +236,14 @@ function timeFormatter(sec) {
 }
 
 function findEvents(events, name) {
-    let nowSec = getNowTimestamp(nowTimezone),
+    if (nowOffset != 0) {
+        let cntEvent = events.length;
+        if (cntEvent > 0)
+            return [`${name}这天有${cntEvent}件事项~`];
+        else
+            return [`${name}这天没有安排~`];
+    }
+    let nowSec = getNowTimestamp(nowTimezone, nowOffset),
         ongoingText, nextText;
 
     // step 1: find an ongoing event

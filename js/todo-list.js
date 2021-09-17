@@ -24,6 +24,10 @@ const Todo = {
             addingEvent: false,
             sendingEvent: false,
             showingEvents: false,
+            backTodayTipPop: false,
+            todayText: '',
+            todayEventTitle: '今天的日程',
+            offset: 0,
             eventData: {
                 lanran: [],
                 xiaowu: [],
@@ -120,10 +124,11 @@ const Todo = {
             var loadingInstance = ElementPlus.ElLoading.service({text: '正在获取日程'});
             let apiSource = this.getAPISource();
             username = this.username;
+            offset = this.offset; // Keep it consistent with the backend
             axios({
                 method: 'get',
                 url: apiSource + '/get_daily_schedule',
-                params: {username: username}
+                params: {username: username, offset: -offset}
             })
             .then(response => {
                 let data = response.data;
@@ -137,6 +142,12 @@ const Todo = {
                     let cirColor = this.themeColor[this.username];
                     let timezone = this.timezone[this.username];
 
+                    this.todayText = getTodayText(timezone, offset);
+                    if (offset != 0)
+                        this.todayEventTitle = `${getTodayText(timezone, offset, true)}的日程`;
+                    else
+                        this.todayEventTitle = '今天的日程';
+
                     if (this.username == 'lanran') {
                         xiaowuDist = 20;
                         lanranDist = -20;
@@ -145,7 +156,7 @@ const Todo = {
                         lanranDist = 20;
                         xiaowuDist = -20;
                     }
-                    changeCircleUser(cirColor, timezone);
+                    changeCircleUser(cirColor, timezone, offset);
                     setTimeout(() => {
                         animateDrawEvents(this.eventData.xiaowu, xiaowuDist,
                             this.themeColor.xiaowu, '#events-xiaowu',
@@ -172,7 +183,8 @@ const Todo = {
             return timeFormatter(row.en_sec);
         },
         tableRowStatus({row, rowIndex}) {
-            let nowSec = getNowTimestamp(this.timezone[this.username]);
+            if (this.offset != 0) return '';
+            let nowSec = getNowTimestamp(this.timezone[this.username], this.offset);
             if (nowSec > row.en_sec)
                 return 'info-row';
             if (nowSec >= row.st_sec && nowSec <= row.en_sec)
@@ -234,5 +246,25 @@ const Todo = {
                 });
             }
         },
+        prevDay() {
+            this.offset--;
+            if (!this.backTodayTipPop) {
+                ElementPlus.ElMessage('点击中间的日期按钮，可以快速回到今天哦~');
+                this.backTodayTipPop = true;
+            }
+            this.refreshEventData();
+        },
+        nextDay() {
+            this.offset++;
+            if (!this.backTodayTipPop) {
+                ElementPlus.ElMessage('点击中间的日期栏，可以快速回到今天哦~');
+                this.backTodayTipPop = true;
+            }
+            this.refreshEventData();
+        },
+        backToday() {
+            this.offset = 0;
+            this.refreshEventData();
+        }
     }
 }

@@ -47,7 +47,7 @@
                 <el-button icon="el-icon-arrow-right" @click="nextDay" circle></el-button>
             </el-button-group>
             <br>
-            <svg :width="svgWidth" :height="svgWidth">
+            <svg :width="svgWidth" :height="svgWidth" style="padding-top: 10px;">
                 <g id="clock"></g>
                 <g id="events-xiaowu"></g>
                 <g id="events-lanran"></g>
@@ -57,7 +57,8 @@
             title="添加日程"
             v-model="addingEvent"
             @open="dialogOpen()"
-            :close-on-click-modal=false>
+            :close-on-click-modal=false
+            width="60%">
                 <el-form
                 ref="eventForm"
                 :model="form"

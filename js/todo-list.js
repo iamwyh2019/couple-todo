@@ -37,7 +37,7 @@ const Todo = {
                 xiaowu: 'lightpink'
             },
             timezone: {
-                lanran: -5,
+                lanran: -6,
                 xiaowu: +8
             },
             form: {
